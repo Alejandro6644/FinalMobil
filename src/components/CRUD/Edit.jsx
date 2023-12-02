@@ -2,36 +2,32 @@ import React, { Component } from 'react'
 import { Text, StyleSheet, View } from 'react-native'
 import FooterShared from "../shared/Footer-shared";
 
-export default function Edit (props) {
-  const { navigation } = props;
-    return (
-        <View style={styles.container}>
-        <View style={styles.body}>
-          <Text> No voten por Claudia </Text>
-        </View>
-        <FooterShared style={styles.footer} navigation={navigation}></FooterShared>
-      </View>
-    );
-}
+export default function Edit({ user, onSave, onCancel }) {
+  const [editedUser, setEditedUser] = useState({ ...user });
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    display: "flex",
-    height: "100%",
-  },
-  body: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  },
-  footer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    width: "100%",
-  },
-});
+  const handleSave = () => {
+    onSave(editedUser);
+  };
+
+  return (
+    <View>
+      <Text>Editar Usuario</Text>
+      <TextInput
+        placeholder="Nombre"
+        value={editedUser.first || editedUser.firstname}
+        onChangeText={(text) =>
+          setEditedUser({ ...editedUser, first: text })
+        }
+      />
+      <TextInput
+        placeholder="Apellido"
+        value={editedUser.last || editedUser.lastname}
+        onChangeText={(text) =>
+          setEditedUser({ ...editedUser, last: text })
+        }
+      />
+      <Button title="Guardar" onPress={handleSave} />
+      <Button title="Cancelar" onPress={onCancel} />
+    </View>
+  );
+}

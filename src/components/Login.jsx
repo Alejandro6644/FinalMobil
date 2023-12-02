@@ -92,7 +92,7 @@ export default function Login(props) {
       <TouchableOpacity style={styles.bottom} onPress={changeForm}>
         <Text style={styles.textos}>Registrate</Text>
       </TouchableOpacity>
-      {/* <Button title="Registrar" onPress={changeForm} /> */}
+      <Button title="Registrar" onPress={changeForm} />
     </View>
   );
 }

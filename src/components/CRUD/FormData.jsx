@@ -1,13 +1,17 @@
-import React, { useState } from "react";
-import { View, TextInput, Button, TouchableOpacity, Text } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, TextInput, Button, TouchableOpacity, Text, Image } from "react-native";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from "../../utils/conn";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions'; // Importa Permissions para la cámara
 
 export default function FormData(props) {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [imgURL, setImgURL] = useState(null);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -21,8 +25,48 @@ export default function FormData(props) {
 
   const handleConfirm = (date) => {
     const formattedDate = date.toISOString().split("T")[0];
-    setFechaNacimiento(formattedDate); // Actualiza el estado de fechaNacimiento
+    setFechaNacimiento(formattedDate);
     hideDatePicker();
+  };
+
+  const handleImagePicker = async () => {
+    if (Constants.platform.ios) {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Se requiere permiso para acceder a la galería de fotos.');
+        return;
+      }
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImgURL(result.uri);
+    }
+  };
+
+  const handleCameraPicker = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    if (status !== 'granted') {
+      alert('Se requiere permiso para acceder a la cámara.');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImgURL(result.uri);
+    }
   };
 
   const handleGuardarPersona = async () => {
@@ -36,12 +80,13 @@ export default function FormData(props) {
         first: nombre,
         last: apellido,
         born: fechaNacimiento,
+        img: imgURL,
       });
       console.log("Document written with ID: ", docRef.id);
-      // Limpia los campos después de guardar
       setNombre("");
       setApellido("");
       setFechaNacimiento("");
+      setImgURL(null);
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -63,12 +108,21 @@ export default function FormData(props) {
         <TextInput
           placeholder="Fecha de Nacimiento"
           value={fechaNacimiento}
-          editable={false} // hace que el TextInput no sea editable
-          // No necesitas onChangeText aquí ya que el valor se establecerá con el DatePicker
+          editable={false}
         />
       </TouchableOpacity>
 
-      {/* El resto del código UI sigue igual */}
+      <TouchableOpacity onPress={handleImagePicker}>
+        <Text>Seleccionar imagen de la galería</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleCameraPicker}>
+        <Text>Tomar foto con la cámara</Text>
+      </TouchableOpacity>
+
+      {imgURL && <Image source={{ uri: imgURL }} style={{ width: 200, height: 200 }} />}
+
+      <Button title="Guardar Persona" onPress={handleGuardarPersona} />
 
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -76,9 +130,6 @@ export default function FormData(props) {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-
-      {/* El resto del código UI sigue igual */}
-      <Button title="Guardar Persona" onPress={handleGuardarPersona} />
     </View>
   );
 }

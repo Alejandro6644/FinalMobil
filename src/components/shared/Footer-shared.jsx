@@ -3,23 +3,31 @@ import { Text, StyleSheet, View, Button } from "react-native";
 
 export default function FooterShared(props) {
   const { navigation } = props;
+
+  const logout = () => {
+    console.log("Salir...");
+    signOut(auth)
+      .then(() => {
+        console.log("Sesión cerrada xD");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
   return (
     <View style={styles.footer}>
       <Button
-        title="Crear"
+        title="Listar "
         onPress={() => navigation.navigate("Create")}
       ></Button>
       <Button
-        title="Actualizar"
+        title="Crear xd"
         onPress={() => navigation.navigate("Crear")}
       ></Button>
       <Button
-        title="Editar"
-        onPress={() => navigation.navigate("Edit")}
-      ></Button>
-      <Button
-        title="Borrar"
-        onPress={() => navigation.navigate("Delete")}
+        title="Logout"
+        onPress={logout}
       ></Button>
     </View>
   );
