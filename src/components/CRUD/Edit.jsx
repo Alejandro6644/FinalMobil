@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
-import FooterShared from "../shared/Footer-shared";
+import React, { useState } from "react";
+import { View, Text, TextInput, Button } from "react-native";
 
-export default function Edit({ user, onSave, onCancel }) {
+export default function EditUser({ user, onSave, onCancel }) {
   const [editedUser, setEditedUser] = useState({ ...user });
 
   const handleSave = () => {

@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Text,
-  StyleSheet,
-  View,
-  ScrollView,
-  Image,
-  Button,
-} from "react-native";
+import { Text, StyleSheet, View, ScrollView, Image, Button, Modal } from "react-native";
 import FooterShared from "../shared/Footer-shared";
 import FormData from "./FormData";
-import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { app } from "../../utils/conn";
 import defaultProfileImage from "../../assets/aqua.jpg";
-import Edit from "./Edit";
-import Delete from "./Delete";
+import EditUser from "./Edit";
+import DeleteUser from "./Delete";
 
 export default function Create(props) {
   const { navigation } = props;
@@ -24,8 +17,7 @@ export default function Create(props) {
 
   useEffect(() => {
     const db = getFirestore(app);
-    const usersCol = collection(db, "user");
-    // onSnapshot se suscribe a los cambios de la colección
+    const usersCol = collection(db, "videogames");
     const unsubscribe = onSnapshot(
       usersCol,
       (snapshot) => {
@@ -36,12 +28,10 @@ export default function Create(props) {
         setUsers(userList);
       },
       (error) => {
-        // Manejar cualquier error
         console.error(error);
       }
     );
 
-    // Limpiar la suscripción cuando el componente se desmonte
     return () => unsubscribe();
   }, []);
 
@@ -56,29 +46,22 @@ export default function Create(props) {
   };
 
   const handleSaveUser = async (editedUser) => {
-    // Actualizar los datos del usuario en Firebase
     const db = getFirestore(app);
-    const userDoc = doc(db, "user", editedUser.id);
+    const userDoc = doc(db, "videogames", editedUser.id);
     await updateDoc(userDoc, editedUser);
-
-    // Cerrar el modal de edición
     setEditUserModalVisible(false);
   };
 
   const handleDeleteUserConfirmed = async (userId) => {
-    // Borrar al usuario de Firebase
     const db = getFirestore(app);
-    const userDoc = doc(db, "user", userId);
+    const userDoc = doc(db, "videogames", userId);
     await deleteDoc(userDoc);
-
-    // Cerrar el modal de eliminación
     setDeleteUserModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.body}>
-        {/* Iterar y mostrar usuarios */}
         {users.map((user) => (
           <View key={user.id} style={styles.userItem}>
             <Image
@@ -90,15 +73,16 @@ export default function Create(props) {
             <Text>Fecha de Nacimiento: {user.born}</Text>
             <Button
               title="Editar"
-              onPress={() => navigation.navigate("Edit")}
-            ></Button>
+              onPress={() => handleEditUser(user)}
+            />
             <Button
               title="Borrar"
-              onPress={() => navigation.navigate("Delete")}
-            ></Button>
+              onPress={() => handleDeleteUser(user)}
+            />
           </View>
         ))}
-        {/* Modales de edición y eliminación */}
+
+        {/* Modal flotante de edición */}
         <Modal
           visible={editUserModalVisible}
           transparent={true}
@@ -113,6 +97,7 @@ export default function Create(props) {
           </View>
         </Modal>
 
+        {/* Modal flotante de eliminación */}
         <Modal
           visible={deleteUserModalVisible}
           transparent={true}
@@ -151,7 +136,7 @@ const styles = StyleSheet.create({
   userImage: {
     width: 100,
     height: 100,
-    borderRadius: 50, // Hace que la imagen sea circular
+    borderRadius: 50,
     marginBottom: 10,
   },
   footer: {
@@ -160,5 +145,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro semi-transparente para el modal
   },
 });

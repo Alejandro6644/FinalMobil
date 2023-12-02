@@ -6,9 +6,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import "react-native-gesture-handler";
 import Create from "../components/CRUD/Create";
-import Update from "../components/CRUD/Update";
-import Delete from "../components/CRUD/Delete";
-import Edit from "../components/CRUD/Edit";
+import DeleteUser from "../components/CRUD/Delete";
+import EditUser from "../components/CRUD/Edit";
 import FormData from "../components/CRUD/FormData";
 const Stack = createStackNavigator();
 
@@ -34,14 +33,14 @@ export default class Navigator extends Component {
           />
           <Stack.Screen
             name="Delete"
-            component={Delete}
+            component={DeleteUser}
             options={{
               title: "Delete XD",
             }}
           />
           <Stack.Screen
             name="Edit"
-            component={Edit}
+            component={EditUser}
             options={{
               title: "Editar XD",
             }}

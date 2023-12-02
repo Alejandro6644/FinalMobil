@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, Button, TouchableOpacity, Text, Image } from "react-native";
+import { View, TextInput, Button, TouchableOpacity, Text, Image, StyleSheet } from "react-native";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { app } from "../../utils/conn";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions'; // Importa Permissions para la cámara
+import FooterShared from "../shared/Footer-shared";
 
 export default function FormData(props) {
+  const { navigation } = props;
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
@@ -76,10 +78,10 @@ export default function FormData(props) {
     }
     const db = getFirestore(app);
     try {
-      const docRef = await addDoc(collection(db, "user"), {
-        first: nombre,
-        last: apellido,
-        born: fechaNacimiento,
+      const docRef = await addDoc(collection(db, "videogames"), {
+        name: nombre,
+        gender: apellido,
+        realse_date: fechaNacimiento,
         img: imgURL,
       });
       console.log("Document written with ID: ", docRef.id);
@@ -95,18 +97,18 @@ export default function FormData(props) {
   return (
     <View>
       <TextInput
-        placeholder="Nombre"
+        placeholder="Nombre del juego"
         value={nombre}
         onChangeText={(text) => setNombre(text)}
       />
       <TextInput
-        placeholder="Apellido"
+        placeholder="Género del vídeojuego"
         value={apellido}
         onChangeText={(text) => setApellido(text)}
       />
       <TouchableOpacity onPress={showDatePicker}>
         <TextInput
-          placeholder="Fecha de Nacimiento"
+          placeholder="Fecha de lanzamiento"
           value={fechaNacimiento}
           editable={false}
         />
@@ -130,6 +132,46 @@ export default function FormData(props) {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
+      <FooterShared style={styles.footer} navigation={navigation} />
+
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    display: "flex",
+    height: "100%",
+  },
+  body: {
+    flex: 1,
+    width: "100%",
+  },
+  userItem: {
+    marginVertical: 10,
+    padding: 15,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 5,
+  },
+  userImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
+  },
+  footer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro semi-transparente para el modal
+  },
+});

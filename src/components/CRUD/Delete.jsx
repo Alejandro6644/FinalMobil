@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Button } from "react-native";
 
-export default function Delete({ user, onDelete, onCancel }) {
+export default function DeleteUser({ user, onDelete, onCancel }) {
   const handleDelete = () => {
     onDelete(user.id);
   };
