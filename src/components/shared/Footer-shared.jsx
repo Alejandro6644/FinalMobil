@@ -1,5 +1,14 @@
 import React, { Component } from "react";
 import { Text, StyleSheet, View, Button } from "react-native";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  collection,
+  addDo,
+} from "firebase/auth";
+import app from "../../utils/conn";
+const auth = getAuth(app);
 
 export default function FooterShared(props) {
   const { navigation } = props;
