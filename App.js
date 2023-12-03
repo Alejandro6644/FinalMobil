@@ -31,10 +31,8 @@ export default function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
-        console.log("User is Signed", uid);
         setUser(true);
       } else {
-        console.log("User is not signed");
         setUser(false);
       }
     });
@@ -53,10 +51,8 @@ export default function App() {
 
 function Logout(params) {
   const logout = () => {
-    console.log("Salir...");
     signOut(auth)
       .then(() => {
-        console.log("Sesión cerrada xD");
       })
       .catch((error) => {
         // An error happened.
@@ -110,7 +106,6 @@ function Logout(params) {
         totalPayable: totalPayable.toFixed(2),
       });
     }
-    console.log(total);
   };
   return (
     <>

@@ -30,11 +30,9 @@ export default function RegisterForm(props) {
 
   function changeData(type, data) {
     setFormData({ ...formData, [type]: data });
-    console.log(formData);
   }
 
   const register = () => {
-    console.log("registrando...");
     let errors = {};
     if (!formData.email || !formData.password || !formData.repeatPassword) {
       if (!formData.email) errors.email = true;
@@ -49,25 +47,19 @@ export default function RegisterForm(props) {
       errors.password = true;
       errors.repeatPassword = true;
     } else {
-      console.log("Todo bien");
       const auth = getAuth(app);
-      console.log(formData);
 
       createUserWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
           // ..
-          console.log(errorMessage, errorCode);
-          console.log("Error XD")
         });
     }
-    console.log(errors);
     setErrors(errors);
   };
   return (

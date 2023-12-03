@@ -33,11 +33,9 @@ export default function Login(props) {
 
   function changeData(type, data) {
     setFormData({ ...formData, [type]: data });
-    console.log(formData);
   }
 
   const login = () => {
-    console.log("registrando...");
     let errors = {};
     if (!formData.email || !formData.password) {
       if (!formData.email) errors.email = true;
@@ -47,24 +45,18 @@ export default function Login(props) {
     } else if (formData.password.length < 6) {
       errors.password = true;
     } else {
-      console.log("Todo bien");      
       const auth = getAuth(app);
-      console.log(formData);
       signInWithEmailAndPassword(auth, formData.email, formData.password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
           // ...
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          console.log(errorMessage, errorCode);
-          console.log("Error XD");
         });
     }
-    console.log(errors);
     setErrors(errors);
   };
 

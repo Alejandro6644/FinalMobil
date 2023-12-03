@@ -13,16 +13,30 @@ export default function EditUser({ user, onSave, onCancel }) {
       <Text>Editar Usuario</Text>
       <TextInput
         placeholder="Nombre"
-        value={editedUser.first || editedUser.firstname}
+        value={editedUser.name || editedUser.first || editedUser.firstname}
         onChangeText={(text) =>
-          setEditedUser({ ...editedUser, first: text })
+          setEditedUser({ ...editedUser, name: text })
         }
       />
       <TextInput
-        placeholder="Apellido"
-        value={editedUser.last || editedUser.lastname}
+        placeholder="Género"
+        value={editedUser.gender || editedUser.last || editedUser.lastname}
         onChangeText={(text) =>
-          setEditedUser({ ...editedUser, last: text })
+          setEditedUser({ ...editedUser, gender: text })
+        }
+      />
+      <TextInput
+        placeholder="Fecha de Lanzamiento"
+        value={editedUser.release_date || editedUser.born}
+        onChangeText={(text) =>
+          setEditedUser({ ...editedUser, release_date: text })
+        }
+      />
+      <TextInput
+        placeholder="URL de la Imagen"
+        value={editedUser.img || ""}
+        onChangeText={(text) =>
+          setEditedUser({ ...editedUser, img: text })
         }
       />
       <Button title="Guardar" onPress={handleSave} />

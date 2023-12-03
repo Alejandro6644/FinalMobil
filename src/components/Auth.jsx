@@ -8,7 +8,6 @@ export default function Auth() {
   const changeForm = () => {
     setIsLogin(!isLogin)
   };
-  console.log(app);
   return (
     <View style={styles.viewAuth}>
       <Image style={styles.logo} source={require("../assets/ZELDATOK.png")} />

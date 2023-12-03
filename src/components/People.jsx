@@ -38,13 +38,11 @@ export default function People(props) {
         last: apellido,
         born: fechaNacimiento,
       });
-      console.log("Document written with ID: ", docRef.id);
       // Limpia los campos después de guardar
       setNombre("");
       setApellido("");
       setFechaNacimiento("");
     } catch (error) {
-      console.error("Error adding document: ", error);
     }
   };
 
