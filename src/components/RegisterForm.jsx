@@ -67,7 +67,7 @@ export default function RegisterForm(props) {
       <Text style={styles.title}>Registro de usuarios</Text>
       <TextInput
         style={[styles.input, errors.email ? styles.error : ""]}
-        placeholder="Escribe aquí tu correo, imbecil"
+        placeholder="Escribe aquí tu correo"
         placeholderTextColor="white"
         onChange={(e) => {
           changeData("email", e.nativeEvent.text);
@@ -93,8 +93,9 @@ export default function RegisterForm(props) {
       />
       <Button title="Registrarse" onPress={register} />
       <TouchableOpacity style={styles.bottom} onPress={changeForm}>
-        <Text style={styles.textos}>Iniciar Sesion</Text>
+        <Text style={styles.textos}></Text>
       </TouchableOpacity>
+      <Button title="Iniciar Sesion" onPress={changeForm} />
     </View>
   );
 }
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   },
   textos: {
     textAlign: "center",
-    color: "white",
+    color: "black",
     fontSize: 18,
   },
   input: {
@@ -133,8 +134,8 @@ const styles = StyleSheet.create({
     borderColor: "blue",
     color: "red",
   },
-  bottom:{
-    bottom: -15,
-  }
+  // bottom:{
+  //   bottom: -15,
+  // }
   
 });

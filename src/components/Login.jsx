@@ -62,7 +62,7 @@ export default function Login(props) {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.title}>Login</Text> */}
+      <Text style={styles.title}>Inicio de sesión</Text>
       <TextInput
         style={styles.input}
         placeholder="Escribe aquí tu correo"
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   input: {
     color: "white",
-    height: 70,
+    height: 60,
     width: "80%",
     backgroundColor: "#1E3040",
     borderRadius: 10,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 30,
   },
-  bottom:{
-    bottom: -100,
-  }
+  // bottom:{
+  //   bottom: -100,
+  // }
 });

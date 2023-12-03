@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { app } from "../../utils/conn"; // Asegúrate de que esta ruta es correcta para tu conexión de Firebase
@@ -67,19 +75,22 @@ export default function EditUser({ user, onSave, onCancel }) {
   };
 
   return (
-    <View>
-      <Text>Editar Usuario</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Editar Usuario</Text>
       <TextInput
+        style={styles.input}
         placeholder="Nombre"
         value={editedUser.name || ""}
         onChangeText={(text) => setEditedUser({ ...editedUser, name: text })}
       />
       <TextInput
+        style={styles.input}
         placeholder="Género"
         value={editedUser.gender || ""}
         onChangeText={(text) => setEditedUser({ ...editedUser, gender: text })}
       />
       <TextInput
+        style={styles.input}
         placeholder="Fecha de Lanzamiento"
         value={editedUser.release_date || ""}
         onChangeText={(text) =>
@@ -87,13 +98,67 @@ export default function EditUser({ user, onSave, onCancel }) {
         }
       />
 
-      <Button
-        title="Seleccionar imagen de la galería"
+      <TouchableOpacity
+        style={styles.button}
         onPress={handleSelectImage}
-      />
-      <Button title="Tomar foto con la cámara" onPress={handleTakePhoto} />
-      <Button title="Guardar" onPress={handleSave} />
-      <Button title="Cancelar" onPress={onCancel} />
+      >
+        <Text style={styles.buttonText}>Seleccionar imagen de la galería</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleTakePhoto}
+      >
+        <Text style={styles.buttonText}>Tomar foto con la cámara</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSave}
+      >
+        <Text style={styles.buttonText}>Guardar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={onCancel}
+      >
+        <Text style={styles.buttonText}>Cancelar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 0.8,
+    backgroundColor: "rgba(91, 192, 222, 0.85)",
+    padding: 20,
+    height: "90%",
+    borderRadius: 10,
+  },
+  input: {
+    backgroundColor: "white",
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+  title: {
+    color: "white",
+    fontSize: 20,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  button: {
+    marginVertical: 10,
+    backgroundColor: "#3E92CC",
+    paddingVertical: 5,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 15,
+  },
+});

@@ -7,6 +7,7 @@ import { app } from "../../utils/conn";
 import defaultProfileImage from "../../assets/aqua.jpg";
 import EditUser from "./Edit";
 import DeleteUser from "./Delete";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function Create(props) {
   const { navigation } = props;
@@ -69,17 +70,22 @@ export default function Create(props) {
               source={user.img_url ? { uri: user.img_url } : defaultProfileImage}
               style={styles.userImage}
             />
-            <Text>Nombre: {user.name }</Text>
-            <Text>Genero del videojuego: {user.gender }</Text>
-            <Text>Fecha de publicación: {user.release_date}</Text>
-            <Button
-              title="Editar"
+            <Text style={styles.texto}>Nombre: {user.name }</Text>
+            <Text style={styles.texto}>Genero del videojuego: {user.gender }</Text>
+            <Text style={styles.texto}>Fecha de publicación: {user.release_date}</Text>
+            <TouchableOpacity
+              style={styles.button}
               onPress={() => handleEditUser(user)}
-            />
-            <Button
-              title="Borrar"
+            >
+              <Text style={styles.buttonText}>Editar</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={styles.button}
               onPress={() => handleDeleteUser(user)}
-            />
+            >
+              <Text style={styles.buttonText}>Borrar</Text>
+            </TouchableOpacity>
           </View>
         ))}
 
@@ -129,7 +135,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   userItem: {
-    marginVertical: 10,
+    marginTop: 10,
+    marginBottom: 35,
     padding: 15,
     backgroundColor: "#f0f0f0",
     borderRadius: 5,
@@ -137,8 +144,12 @@ const styles = StyleSheet.create({
   userImage: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: 42,
     marginBottom: 10,
+  },
+  texto: {
+    fontSize: 18,
+    marginBottom: 5,
   },
   footer: {
     display: "flex",
@@ -152,5 +163,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro semi-transparente para el modal
+  },
+  button: {
+    marginVertical: 10,
+    backgroundColor: "#3E92CC",
+    paddingVertical: 5,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 15,
   },
 });

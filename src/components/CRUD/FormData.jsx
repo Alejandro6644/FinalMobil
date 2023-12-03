@@ -60,34 +60,33 @@ export default function FormData(props) {
   const uploadImageAndGameData = async (imageUri) => {
     try {
       // Extrae la extensión del archivo del URI de la imagen
-      const imageExtension = imageUri.split('.').pop();
+      const imageExtension = imageUri.split(".").pop();
       const imageName = `${Date.now().toString()}.${imageExtension}`; // Añade la extensión al nombre del archivo
-  
+
       const reference = ref(storage, `images/${imageName}`);
-  
+
       // Aquí debes convertir imageUri a Blob si es necesario antes de subirlo
       // Crea un objeto Blob si estás trabajando con un URI de archivo
       const response = await fetch(imageUri);
       const blob = await response.blob();
-  
+
       // Sube el Blob en lugar del URI directamente
       await uploadBytes(reference, blob);
-  
+
       // Obtiene la URL de la imagen recién cargada
       const imageUrl = await getDownloadURL(reference);
-  
+
       // Actualiza el estado gameData con la URL de la imagen
       setGameData((prevData) => ({
         ...prevData,
         img_url: imageUrl,
       }));
-  
+
       console.log("Imagen cargada exitosamente.");
     } catch (error) {
       console.error("Error al cargar la imagen: ", error);
     }
   };
-  
 
   const handleImagePicker = async () => {
     try {
@@ -171,44 +170,51 @@ export default function FormData(props) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <TextInput
         placeholder="Nombre del juego"
         value={nombre}
         onChangeText={(text) => setNombre(text)}
+        style={styles.input}
       />
       <TextInput
         placeholder="Género del videojuego"
         value={apellido}
         onChangeText={(text) => setApellido(text)}
+        style={styles.input}
       />
       <TouchableOpacity onPress={showDatePicker}>
         <TextInput
           placeholder="Fecha de lanzamiento"
           value={fechaNacimiento}
           editable={false}
+          style={styles.input}
         />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleImagePicker}>
-        <Text>Seleccionar imagen de la galería</Text>
+      <TouchableOpacity style={styles.perro} onPress={handleImagePicker}>
+        <Text style={styles.white}>Seleccionar imagen de la galería</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleCameraPicker}>
-        <Text>Tomar foto con la cámara</Text>
+      <TouchableOpacity style={styles.perro} onPress={handleCameraPicker}>
+        <Text style={styles.white}>Tomar foto con la cámara</Text>
       </TouchableOpacity>
 
       {gameData.img_url && (
-        <View>
+        <View style={styles.imgcontainer}>
           <Image
             source={{ uri: gameData.img_url }}
             style={{ width: 200, height: 200 }}
           />
-          <Button title="Ver imagen" onPress={showImagePreview} />
+          <TouchableOpacity style={styles.button} onPress={showImagePreview}>
+            <Text style={styles.buttonText}>Ver imagen</Text>
+          </TouchableOpacity>
         </View>
       )}
 
-      <Button title="Guardar Videojuego" onPress={handleGuardarPersona} />
+      <TouchableOpacity style={styles.button} onPress={handleGuardarPersona}>
+        <Text style={styles.buttonText}>Guardar Videojuego</Text>
+      </TouchableOpacity>
 
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -224,12 +230,9 @@ export default function FormData(props) {
         visible={imagePreviewVisible}
       >
         <View style={styles.modalContainer}>
-          <Image
-            source={{ uri: gameData.img_url }}
-            style={{ width: 300, height: 300 }}
-          />
-          <Pressable onPress={hideImagePreview}>
-            <Text style={{ color: "white" }}>Cerrar</Text>
+          <Image source={{ uri: gameData.img_url }} style={styles.imgpreview} />
+          <Pressable onPress={hideImagePreview} style={styles.press} >
+            <Text style={styles.buttonPress}>Cerrar</Text>
           </Pressable>
         </View>
       </Modal>
@@ -239,9 +242,83 @@ export default function FormData(props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    display: "flex",
-    height: "100%",
+    position: 'relative',
+    flex: 1,
+
   },
-  // Resto de los estilos...
+  imgcontainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+  imgpreview: {
+    width: 350,
+    height: 350,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  texto: {
+    fontSize: 18,
+    marginBottom: 5,
+    marginLeft: 6,
+  },
+  white: {
+    fontSize: 15,
+    marginBottom: 5,
+    marginLeft: 6,
+    color: "white",
+  },
+  input: {
+    backgroundColor: "white",
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 25,
+    marginLeft: 15,
+    borderRadius: 5,
+    width: "90%",
+    fontFamily: "Roboto",
+  },
+  perro: {
+    paddingHorizontal: "3%",
+    paddingVertical: 3,
+    marginVertical: 10,
+    marginRight: 60,
+    backgroundColor: "#3E92CC",
+    color: "white",
+  },
+  button: {
+    marginVertical: 10,
+    backgroundColor: "#3E92CC",
+    paddingVertical: 7,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 70
+  },
+  modalContainer: {
+    marginVertical: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    paddingVertical: 35,
+    borderRadius: 5,
+    paddingHorizontal: 23
+  },
+  buttonPress: {
+    color: "black",
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "500",
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

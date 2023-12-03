@@ -21,14 +21,14 @@ export default class Navigator extends Component {
             name="Create"
             component={Create}
             options={{
-              title: "Create XD",
+              title: "Lista de videojuegos",
             }}
           />
           <Stack.Screen
             name="Crear"
             component={FormData}
             options={{
-              title: "Crear ahora si XD",
+              title: "Crear videojuego",
             }}
           />
           <Stack.Screen
