@@ -4,6 +4,7 @@ import { View, Text, Button } from "react-native";
 export default function DeleteUser({ user, onDelete, onCancel }) {
   const handleDelete = () => {
     onDelete(user.id);
+    alert("Persona eliminada con éxito!");
   };
 
   return (

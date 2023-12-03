@@ -43,7 +43,6 @@ export default function Create(props) {
   const handleDeleteUser = (user) => {
     setSelectedUser(user);
     setDeleteUserModalVisible(true);
-    alert("Persona eliminada con éxito!");
 
   };
 
