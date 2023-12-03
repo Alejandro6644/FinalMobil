@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   TextInput,
@@ -11,18 +11,11 @@ import {
   Pressable,
 } from "react-native";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
-import {
-  getStorage,
-  ref,
-  uploadString,
-  getDownloadURL,
-  uploadBytes 
-} from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { app } from "../../utils/conn";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as ImagePicker from "expo-image-picker";
-import Constants from "expo-constants";
-import * as Permissions from "expo-permissions"; // Importa Permissions para la cámara
+import * as Permissions from "expo-permissions";
 import FooterShared from "../shared/Footer-shared";
 
 const storage = getStorage(app);
@@ -35,6 +28,12 @@ export default function FormData(props) {
   const [imgURL, setImgURL] = useState(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+  const [gameData, setGameData] = useState({
+    name: "",
+    gender: "",
+    release_date: "",
+    img_url: null,
+  });
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -57,59 +56,93 @@ export default function FormData(props) {
     setFechaNacimiento(formattedDate);
     hideDatePicker();
   };
+
+  const uploadImageAndGameData = async (imageUri) => {
+    try {
+      // Extrae la extensión del archivo del URI de la imagen
+      const imageExtension = imageUri.split('.').pop();
+      const imageName = `${Date.now().toString()}.${imageExtension}`; // Añade la extensión al nombre del archivo
+  
+      const reference = ref(storage, `images/${imageName}`);
+  
+      // Aquí debes convertir imageUri a Blob si es necesario antes de subirlo
+      // Crea un objeto Blob si estás trabajando con un URI de archivo
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+  
+      // Sube el Blob en lugar del URI directamente
+      await uploadBytes(reference, blob);
+  
+      // Obtiene la URL de la imagen recién cargada
+      const imageUrl = await getDownloadURL(reference);
+  
+      // Actualiza el estado gameData con la URL de la imagen
+      setGameData((prevData) => ({
+        ...prevData,
+        img_url: imageUrl,
+      }));
+  
+      console.log("Imagen cargada exitosamente.");
+    } catch (error) {
+      console.error("Error al cargar la imagen: ", error);
+    }
+  };
+  
+
   const handleImagePicker = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await ImagePicker.requestCameraRollPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Se requiere permiso para acceder a la galería de fotos.');
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
+        alert("Se requiere permiso para acceder a la galería de fotos.");
         return;
       }
-    }
-  
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-  
-    if (!result.canceled) { 
-      try {
-        const imageRef = ref(storage, 'images/' + result.assets[0].fileName); 
-        const response = await fetch(result.assets[0].uri); 
-        const blob = await response.blob(); 
-        await uploadBytes(imageRef, blob); 
-        const imgUrl = await getDownloadURL(imageRef);
-  
-        setImgURL(imgUrl); 
-      } catch (error) {
-        console.error("Error uploading image: ", error);
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        await uploadImageAndGameData(result.uri);
+        console.log("Éxito al subir la imagen");
       }
+    } catch (error) {
+      console.error("Error al seleccionar y subir la imagen: ", error);
     }
   };
 
   const handleCameraPicker = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    if (status !== "granted") {
-      alert("Se requiere permiso para acceder a la cámara.");
-      return;
-    }
+    try {
+      const { status } = await Permissions.askAsync(Permissions.CAMERA);
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+      if (status !== "granted") {
+        alert("Se requiere permiso para acceder a la cámara.");
+        return;
+      }
 
-    if (!result.cancelled) {
-      setImgURL(result.uri);
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        await uploadImageAndGameData(result.uri);
+        console.log("Éxito al subir la imagen");
+      }
+    } catch (error) {
+      console.error("Error al tomar y subir la foto: ", error);
     }
   };
 
   const handleGuardarPersona = async () => {
-    if (!nombre || !apellido || !fechaNacimiento) {
-      alert("Todos los campos son obligatorios");
+    if (!nombre || !apellido || !fechaNacimiento || !gameData.img_url) {
+      alert("Todos los campos son obligatorios, incluida la imagen");
       return;
     }
     const db = getFirestore(app);
@@ -117,17 +150,23 @@ export default function FormData(props) {
       const docRef = await addDoc(collection(db, "videogames"), {
         name: nombre,
         gender: apellido,
-        realse_date: fechaNacimiento,
-        img: imgURL, // Guarda la URL de descarga de la imagen en el campo "img"
+        release_date: fechaNacimiento,
+        img_url: gameData.img_url, // Utiliza la URL de la imagen del estado gameData
       });
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Documento escrito con ID: ", docRef.id);
       // Limpia los campos después de guardar
       setNombre("");
       setApellido("");
       setFechaNacimiento("");
-      setImgURL(null); // Limpia la URL de descarga de la imagen después de guardar
+      setGameData({
+        name: "",
+        gender: "",
+        release_date: "",
+        img_url: null,
+      }); // Limpia los datos del juego después de guardar
+      alert("Videojuego creado con éxito!");
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error al agregar el documento: ", error);
     }
   };
 
@@ -159,14 +198,17 @@ export default function FormData(props) {
         <Text>Tomar foto con la cámara</Text>
       </TouchableOpacity>
 
-      {imgURL && (
+      {gameData.img_url && (
         <View>
-          <Image source={{ uri: imgURL }} style={{ width: 200, height: 200 }} />
+          <Image
+            source={{ uri: gameData.img_url }}
+            style={{ width: 200, height: 200 }}
+          />
           <Button title="Ver imagen" onPress={showImagePreview} />
         </View>
       )}
 
-      <Button title="Guardar Persona" onPress={handleGuardarPersona} />
+      <Button title="Guardar Videojuego" onPress={handleGuardarPersona} />
 
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -182,7 +224,10 @@ export default function FormData(props) {
         visible={imagePreviewVisible}
       >
         <View style={styles.modalContainer}>
-          <Image source={{ uri: imgURL }} style={{ width: 300, height: 300 }} />
+          <Image
+            source={{ uri: gameData.img_url }}
+            style={{ width: 300, height: 300 }}
+          />
           <Pressable onPress={hideImagePreview}>
             <Text style={{ color: "white" }}>Cerrar</Text>
           </Pressable>

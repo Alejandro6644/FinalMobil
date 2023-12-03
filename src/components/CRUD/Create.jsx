@@ -43,6 +43,8 @@ export default function Create(props) {
   const handleDeleteUser = (user) => {
     setSelectedUser(user);
     setDeleteUserModalVisible(true);
+    alert("Persona eliminada con éxito!");
+
   };
 
   const handleSaveUser = async (editedUser) => {
@@ -65,7 +67,7 @@ export default function Create(props) {
         {users.map((user) => (
           <View key={user.id} style={styles.userItem}>
             <Image
-              source={user.img ? { uri: user.img } : defaultProfileImage}
+              source={user.img_url ? { uri: user.img_url } : defaultProfileImage}
               style={styles.userImage}
             />
             <Text>Nombre: {user.name }</Text>
