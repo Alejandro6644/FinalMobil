@@ -72,7 +72,7 @@ export default function Create(props) {
             />
             <Text>Nombre: {user.name }</Text>
             <Text>Genero del videojuego: {user.gender }</Text>
-            <Text>Fecha de publicación: {user.realse_date}</Text>
+            <Text>Fecha de publicación: {user.release_date}</Text>
             <Button
               title="Editar"
               onPress={() => handleEditUser(user)}
