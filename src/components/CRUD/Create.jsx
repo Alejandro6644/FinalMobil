@@ -68,9 +68,9 @@ export default function Create(props) {
               source={user.img ? { uri: user.img } : defaultProfileImage}
               style={styles.userImage}
             />
-            <Text>Nombre: {user.first || user.firstname}</Text>
-            <Text>Apellido: {user.last || user.lastname}</Text>
-            <Text>Fecha de Nacimiento: {user.born}</Text>
+            <Text>Nombre: {user.name }</Text>
+            <Text>Genero del videojuego: {user.gender }</Text>
+            <Text>Fecha de publicación: {user.realse_date}</Text>
             <Button
               title="Editar"
               onPress={() => handleEditUser(user)}
